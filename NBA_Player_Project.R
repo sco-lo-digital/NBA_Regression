@@ -48,7 +48,10 @@ plot(spfDf$Age, spfDf$avgSalaries)
 hist(sfDf$Age, main = "Histogram of Age")
 #observe number of players per team
 table(sfDf$Tm.x)
+#Create data set for our regression removing irrelevant columns
 lmDf<- subset(spfDf, select = -c(Player,Rk, Tm.x,X2015.16, X2016.17, X2017.18, X2018.19, X2019.20) )
+#Explore summary
+summary(lmDf)
 #plot pairs exploration
 pairs(lmDf[3:8], main = "Data Exploration",col = as.factor(lmDf$Pos))
 pairs(lmDf[9:15], main = "Data Exploration",col = as.factor(lmDf$Pos))
