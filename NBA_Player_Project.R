@@ -53,10 +53,13 @@ lmDf<- subset(spfDf, select = -c(Player,Rk, Tm.x,X2015.16, X2016.17, X2017.18, X
 pairs(lmDf[3:8], main = "Data Exploration",col = as.factor(lmDf$Pos))
 pairs(lmDf[9:15], main = "Data Exploration",col = as.factor(lmDf$Pos))
 pairs(lmDf[16:22], main = "Data Exploration",col = as.factor(lmDf$Pos))
-
+#create cross validation parameter
 train_control <- trainControl(method="cv", number=10)
+#fit without cross validation
 lmFit<-train(avgSalaries~., data = lmDf, method = 'lmStepAIC')
+#fit with cross validation
 lmcvFit<-train(avgSalaries~., data = lmDf, trControl=train_control, method = 'lmStepAIC')
 residuals<-resid(lmcvFit)
 predictions <- predict(lmFit)
+#plot important variables
 plot(varImp(lmcvFit))
