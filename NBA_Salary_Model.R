@@ -15,21 +15,25 @@ summary(filteredNBA)
 
 ###################################Exploration###############################
 #Multivariate Comparison
-featurePlot(x = finalNBA[, 4:10],
+featurePlot(x = filteredNBA[, 1:8],
             y = as.factor(finalNBA$Pos),
-            plot = "pairs",
+            plot = "pairs",type = c("p", "smooth"),
             auto.key = list(columns = 2))
-featurePlot(x = finalNBA[, 11:17],
+featurePlot(x = finalNBA[, 9:17],
             y = as.factor(finalNBA$Pos),
-            plot = "pairs",
+            plot = "pairs",type = c("p", "smooth"),
             auto.key = list(columns = 2))
 featurePlot(x = finalNBA[, 18:24],
             y = as.factor(finalNBA$Pos),
-            plot = "pairs",
+            plot = "pairs",type = c("p", "smooth"),
+            auto.key = list(columns = 2))
+featurePlot(x = finalNBA[, 27:31],
+            y = as.factor(finalNBA$Pos),
+            plot = "pairs",type = c("p", "smooth"),
             auto.key = list(columns = 2))
 featurePlot(x = finalNBA[, 32:36],
             y = as.factor(finalNBA$Pos),
-            plot = "pairs",
+            plot = "pairs",type = c("p", "smooth"),
             auto.key = list(columns = 2))
 #Univariate Comparison
 regVar <- c("PER", "True.Shoot.Pct", "FTr", "ORB.", "DRB.", "AST.", "STL.","BLK.","TOV.")
@@ -101,10 +105,13 @@ comboInfo#No co-linearities
 train_control <- trainControl(method="repeatedcv", number=20, repeats=2 )
 #fit with cross validation
 lmcvFit<-train(Average_Salary~., data = filteredNBA, trControl=train_control, method = 'lmStepAIC')
+summary(lmcvFit)
 #Traditional NBA Metrix
 TradFit<-train(Average_Salary~PTS+BLK+TOV+PF+Age+ORB+DRB, data = filteredNBA, trControl=train_control, method = 'lmStepAIC')
 summary(TradFit)
 #Advanced NBA Metrics
+InteractionFit <- train(Average_Salary~PER+USG.+VORP+OWS+Age+(PER*True.Shoot.Pct), data = filteredNBA, trControl=train_control, method = 'lmStepAIC')
+
 PERFit <- lm(Average_Salary~PER+USG.+VORP+OWS+Age, data=filteredNBA)
 PERFitCV <- train(Average_Salary~PER+USG.+VORP+OWS+Age, data=filteredNBA, trControl=train_control, method = 'lmStepAIC')
 summary(PERFitCV)
@@ -135,5 +142,5 @@ plot(accuracyPlot, main="Accuracy Plot")
 #Create predictions for each model
 PER_Salary <- predict(PERFitCV, newdata = HB_PER)
 Sink_Salary <- predict(lmcvFit, newdata = HB_PER)
-Trad_Salary <- predict(TradFit, newdata=HB_Trad)
+Trad_Salary <- predict(TradFit, newdata = HB_Trad)
 #summary(predict(PERFitCV$finalModel, filteredNBA, interval = "confidence"))
